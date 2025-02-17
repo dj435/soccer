@@ -1,45 +1,69 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUDN en Vivo</title>
+    <meta charset="utf-8">
+    <title>Iframe sin Pop-ups</title>
     <style>
-        body {
+        html, body {
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         iframe {
             width: 100%;
-            height: 100vh;
+            height: 100%;
             border: none;
         }
     </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const iframe = document.getElementById("streamFrame");
-            const originalSrc = iframe.src;
-
-            // Prevenir cambios en la URL del iframe
-            setInterval(() => {
-                if (iframe.contentWindow.location.href !== originalSrc) {
-                    iframe.contentWindow.location.href = originalSrc;
-                }
-            }, 1000);
-
-            // Bloquear pop-ups y redirecciones en la página principal
-            window.open = function () {};
-            document.addEventListener('click', function (event) {
-                event.stopPropagation();
-            }, true);
-        });
-    </script>
 </head>
 <body>
-    <iframe id="streamFrame" src="https://la12hd.com/vivo/canal.php?stream=tudn" allowfullscreen></iframe>
+    <iframe allowfullscreen="true" scrolling="no" 
+        src="https://la12hd.com/vivo/canal.php?stream=tudn" 
+        allow="encrypted-media" 
+        id="embedIframe">
+    </iframe>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("Protección contra pop-ups activada.");
+
+            // Bloquea la función window.open para evitar ventanas emergentes
+            window.open = function() {
+                console.log("Intento de pop-up bloqueado.");
+                return null;
+            };
+
+            // Evita redirecciones forzadas
+            history.pushState = function() {
+                console.log("Intento de redirección bloqueado.");
+            };
+
+            // Previene eventos sospechosos en clics y teclas
+            const blockEvent = function(event) {
+                event.stopPropagation();
+                event.preventDefault();
+                console.log("Evento sospechoso bloqueado:", event.type);
+            };
+
+            document.addEventListener("click", blockEvent, true);
+            document.addEventListener("auxclick", blockEvent, true);
+            document.addEventListener("mousedown", blockEvent, true);
+            document.addEventListener("mouseup", blockEvent, true);
+            document.addEventListener("touchstart", blockEvent, true);
+            document.addEventListener("keydown", blockEvent, true);
+            document.addEventListener("keyup", blockEvent, true);
+            document.addEventListener("keypress", blockEvent, true);
+        });
+
+        // Evitar redirección completa de la página
+        window.onbeforeunload = function(event) {
+            console.log("Intento de salida bloqueado.");
+            event.preventDefault();
+            return false;
+        };
+    </script>
 </body>
 </html>
+
