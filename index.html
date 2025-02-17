@@ -5,12 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canales Deportivos</title>
     <style>
-        body {
+       body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: #ffff url("https://i.ibb.co/m5RSrmdp/balon.png") repeat fixed 0px 0px;
-            background-size: 100px 100px;
-        }
+	    background: red;
+	    animation: changeColor 10s infinite;
+		}
+
+		@keyframes changeColor {
+			0% {background-color: red;}
+			33% {background-color: green;}
+			65% {background-color: blue;}
+            100% {background-color: red;}
+
+		}
 
         .grid-container {
             display: grid;
