@@ -77,6 +77,12 @@
                 event.preventDefault();
                 event.returnValue = '';
             });
+
+            // Evitar que se dispare la alerta de confirmación de navegación
+            window.addEventListener('beforeunload', function(event) {
+                event.preventDefault();
+                event.returnValue = ''; // Esto previene la alerta de confirmación
+            });
         });
     </script>
 </body>
