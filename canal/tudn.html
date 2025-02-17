@@ -30,6 +30,9 @@
         document.addEventListener("DOMContentLoaded", function() {
             console.log("Protección contra pop-ups activada.");
 
+            let iframe = document.getElementById("embedIframe");
+            let originalSrc = iframe.src; // Guarda la URL original
+
             // Bloquea cualquier intento de abrir nuevas ventanas
             window.open = function() {
                 console.log("Intento de pop-up bloqueado.");
@@ -43,7 +46,6 @@
                 console.log("Intento de redirección bloqueado.");
             };
 
-            // Previene redirecciones forzadas en eventos sospechosos
             document.addEventListener("click", blockNavigation, true);
             document.addEventListener("auxclick", blockNavigation, true);
             document.addEventListener("mousedown", blockNavigation, true);
@@ -57,17 +59,24 @@
             window.onbeforeunload = function(event) {
                 console.log("Intento de salida bloqueado.");
                 event.preventDefault();
+                event.returnValue = ''; // Esto es necesario para algunos navegadores
                 return false;
             };
 
-            // Bloquea intentos de modificar la URL del iframe
+            // Bloquear cambios dentro del iframe
             setInterval(() => {
-                let iframe = document.getElementById("embedIframe");
-                if (iframe.src !== "https://la12hd.com/vivo/canal.php?stream=tudn") {
+                if (iframe.src !== originalSrc) {
                     console.log("Intento de cambiar el iframe bloqueado.");
-                    iframe.src = "https://la12hd.com/vivo/canal.php?stream=tudn";
+                    iframe.src = originalSrc;
                 }
             }, 1000);
+
+            // Detectar redirecciones sospechosas
+            iframe.contentWindow.addEventListener("beforeunload", function(event) {
+                console.log("Redirección dentro del iframe bloqueada.");
+                event.preventDefault();
+                event.returnValue = '';
+            });
         });
     </script>
 </body>
