@@ -24,6 +24,16 @@
             const iframe = document.getElementById("streamFrame");
             const originalSrc = iframe.src;
 
+            // Intentar enfocar el iframe al cargar la página
+            setTimeout(() => {
+                iframe.focus();
+                try {
+                    iframe.contentWindow.document.body.focus();
+                } catch (e) {
+                    console.log("No se pudo enfocar el iframe.");
+                }
+            }, 500);
+
             // Prevenir cambios en la URL del iframe
             setInterval(() => {
                 if (iframe.contentWindow.location.href !== originalSrc) {
@@ -43,4 +53,3 @@
     <iframe id="streamFrame" src="https://la12hd.com/vivo/canal.php?stream=tudn" allowfullscreen></iframe>
 </body>
 </html>
-
