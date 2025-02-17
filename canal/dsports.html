@@ -1,45 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <meta charset="utf-8">
+    <title>Iframe sin Pop-ups</title>
     <style>
-        body {
+        html, body {
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         iframe {
             width: 100%;
-            height: 100vh;
+            height: 100%;
             border: none;
         }
     </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const iframe = document.getElementById("streamFrame");
-            const originalSrc = iframe.src;
-
-            // Prevenir cambios en la URL del iframe
-            setInterval(() => {
-                if (iframe.contentWindow.location.href !== originalSrc) {
-                    iframe.contentWindow.location.href = originalSrc;
-                }
-            }, 1000);
-
-            // Bloquear pop-ups y redirecciones en la página principal
-            window.open = function () {};
-            document.addEventListener('click', function (event) {
-                event.stopPropagation();
-            }, true);
-        });
-    </script>
 </head>
 <body>
-    <iframe id="streamFrame" src="https://la12hd.com/vivo/canal.php?stream=dsports" allowfullscreen></iframe>
+    <iframe id="videoIframe" allowfullscreen="true" scrolling="no" 
+        src="https://la12hd.com/vivo/canal.php?stream=dsports" 
+        allow="encrypted-media">
+    </iframe>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Desactivar el evento de confirmación de navegación (para evitar el mensaje de confirmación)
+            window.onbeforeunload = null;  // Elimina el evento `beforeunload` que causa el mensaje
+
+            // Desactivar el `beforeunload` en el iframe también, para prevenir cambios
+            const iframe = document.getElementById("videoIframe");
+            iframe.contentWindow.onbeforeunload = null;
+
+            // Puedes agregar cualquier otra lógica para cambiar el canal si lo necesitas, pero sin cambiar la URL directamente
+        });
+    </script>
 </body>
 </html>
