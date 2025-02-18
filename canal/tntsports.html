@@ -1,45 +1,89 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <meta charset="utf-8">
+    <title>Sin Pop-ups</title>
     <style>
-        body {
+        html, body {
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         iframe {
             width: 100%;
-            height: 100vh;
+            height: 100%;
             border: none;
         }
     </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const iframe = document.getElementById("streamFrame");
-            const originalSrc = iframe.src;
+</head>
+<body>
+    <iframe allowfullscreen="true" scrolling="no" 
+        src="https://la12hd.com/vivo/canal.php?stream=tntsports" 
+        allow="encrypted-media" 
+        width="100%" height="100%" frameborder="0"
+        id="embedIframe">
+    </iframe>
 
-            // Prevenir cambios en la URL del iframe
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("Protección contra pop-ups activada.");
+
+            let iframe = document.getElementById("embedIframe");
+            let originalSrc = iframe.src; // Guarda la URL original
+
+            // Bloquea cualquier intento de abrir nuevas ventanas
+            window.open = function() {
+                console.log("Intento de pop-up bloqueado.");
+                return null;
+            };
+
+            // Detectar y bloquear cambios de ubicación sospechosos
+            const blockNavigation = function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                console.log("Intento de redirección bloqueado.");
+            };
+
+            document.addEventListener("click", blockNavigation, true);
+            document.addEventListener("auxclick", blockNavigation, true);
+            document.addEventListener("mousedown", blockNavigation, true);
+            document.addEventListener("mouseup", blockNavigation, true);
+            document.addEventListener("touchstart", blockNavigation, true);
+            document.addEventListener("keydown", blockNavigation, true);
+            document.addEventListener("keyup", blockNavigation, true);
+            document.addEventListener("keypress", blockNavigation, true);
+
+            // Evitar que el usuario sea sacado de la página
+            window.onbeforeunload = function(event) {
+                console.log("Intento de salida bloqueado.");
+                event.preventDefault();
+                event.returnValue = ''; // Esto es necesario para algunos navegadores
+                return false;
+            };
+
+            // Bloquear cambios dentro del iframe
             setInterval(() => {
-                if (iframe.contentWindow.location.href !== originalSrc) {
-                    iframe.contentWindow.location.href = originalSrc;
+                if (iframe.src !== originalSrc) {
+                    console.log("Intento de cambiar el iframe bloqueado.");
+                    iframe.src = originalSrc;
                 }
             }, 1000);
 
-            // Bloquear pop-ups y redirecciones en la página principal
-            window.open = function () {};
-            document.addEventListener('click', function (event) {
-                event.stopPropagation();
-            }, true);
+            // Detectar redirecciones sospechosas
+            iframe.contentWindow.addEventListener("beforeunload", function(event) {
+                console.log("Redirección dentro del iframe bloqueada.");
+                event.preventDefault();
+                event.returnValue = '';
+            });
+
+            // Evitar que se dispare la alerta de confirmación de navegación
+            window.addEventListener('beforeunload', function(event) {
+                event.preventDefault();
+                event.returnValue = ''; // Esto previene la alerta de confirmación
+            });
         });
     </script>
-</head>
-<body>
-    <iframe id="streamFrame" src="https://la12hd.com/vivo/canal.php?stream=tntsports" allowfullscreen></iframe>
 </body>
 </html>
